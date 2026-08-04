@@ -29,8 +29,6 @@ externalproject_add( libmpeg2
 	URL_HASH SHA256=5aad06f396553c5b6afb5393ff26187bb1120928d6ed4f88d2482dd41d04cf75
 
 	CONFIGURE_COMMAND
-		${LIBTOOLIZE_EXECUTABLE} --copy --force &&
-		autoreconf -f -i &&
 		<SOURCE_DIR>/configure
 		${CONFIGURE_ARGS}
 		--quiet
@@ -44,6 +42,14 @@ externalproject_add( libmpeg2
 	INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/3rdparty
 	INSTALL_COMMAND make LIBTOOLFLAGS=--silent install
 	${DOWNLOAD_ARGS}
+)
+
+ExternalProject_Add_Step( libmpeg2 bootstrap
+    COMMAND ${LIBTOOLIZE_EXECUTABLE} --copy --force
+    COMMAND autoreconf -f -i
+    WORKING_DIRECTORY <SOURCE_DIR>
+    DEPENDEES download
+    DEPENDERS configure
 )
 
 set( MPEG2_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/include/mpeg2dec )
